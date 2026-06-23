@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { PageTreeSidebar } from '../components/features/editor/PageTreeSidebar';
 import { InsertToolbar } from '../components/features/editor/InsertToolbar';
 import { EditorBlock } from '../components/features/editor/EditorBlock';
@@ -5,14 +6,28 @@ import { PublishPanel } from '../components/features/editor/PublishPanel';
 import { SubmitModal } from '../components/features/editor/SubmitModal';
 import { useEditor } from '../hooks/useEditor';
 import { useAdminContext } from '../App';
+import { moderateSubmission } from '../lib/moderation';
 
 export default function EditorPage() {
   const { docTitle, setDocTitle, docSubtitle, setDocSubtitle, blocks, selectedBlock, setSelectedBlock, updateBlock, removeBlock, moveBlock, addBlock, submitted, setSubmitted } = useEditor();
   const { enqueue } = useAdminContext();
+  const [moderationError, setModerationError] = useState<string | null>(null);
 
   // When auth is wired up, replace `author` / `initials` / `color` with values
   // from the Appwrite session user. See developer_docs.md → "Editor / submitDoc".
   const submitDoc = () => {
+    setModerationError(null);
+
+    const check = moderateSubmission({
+      title: docTitle,
+      subtitle: docSubtitle,
+      body: blocks.map((b) => b.text).join(' '),
+    });
+    if (check.flagged) {
+      setModerationError(check.reason);
+      return;
+    }
+
     const id = 'sub-' + Date.now();
     const item = {
       id,
@@ -61,7 +76,7 @@ export default function EditorPage() {
         </div>
       </section>
 
-      <PublishPanel onSubmit={submitDoc} />
+      <PublishPanel onSubmit={submitDoc} moderationError={moderationError} />
 
       {submitted && <SubmitModal onClose={() => setSubmitted(false)} />}
     </main>

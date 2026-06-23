@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 
 interface PublishPanelProps {
   onSubmit: () => void;
+  moderationError?: string | null;
 }
 
-export function PublishPanel({ onSubmit }: PublishPanelProps) {
+export function PublishPanel({ onSubmit, moderationError }: PublishPanelProps) {
   const navigate = useNavigate();
 
   return (
@@ -16,8 +17,15 @@ export function PublishPanel({ onSubmit }: PublishPanelProps) {
       </div>
 
       <button onClick={onSubmit} style={{ width: '100%', border: 0, cursor: 'pointer', background: 'var(--brand)', color: '#fff', fontFamily: "'Baloo 2', cursive", fontWeight: 700, fontSize: 15, padding: 13, borderRadius: 12, marginBottom: 10, boxShadow: '0 8px 18px -8px var(--brand)' }}>
-        Submit v1.3.1 for review
+        Submit for review
       </button>
+
+      {moderationError && (
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 13px', background: 'color-mix(in srgb, var(--red) 12%, transparent)', border: '1.5px solid color-mix(in srgb, var(--red) 30%, transparent)', borderRadius: 10, marginBottom: 10 }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" strokeWidth="2.2" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" strokeLinecap="round" /></svg>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--red)', lineHeight: 1.4 }}>{moderationError}</span>
+        </div>
+      )}
       <button onClick={() => navigate('/docs')} className="hbords" style={{ width: '100%', border: '1.5px solid var(--line)', cursor: 'pointer', background: 'transparent', color: 'var(--ink)', fontFamily: "'Plus Jakarta Sans'", fontWeight: 600, fontSize: 14, padding: 11, borderRadius: 11, marginBottom: 24 }}>
         Preview as reader
       </button>

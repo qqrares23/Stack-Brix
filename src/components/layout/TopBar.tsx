@@ -26,9 +26,11 @@ const SEG_STYLE: React.CSSProperties = {
 interface TopBarProps {
   theme: Theme;
   toggleTheme: () => void;
+  isAdmin: boolean;
+  isLoggedIn: boolean;
 }
 
-export function TopBar({ theme, toggleTheme }: TopBarProps) {
+export function TopBar({ theme, toggleTheme, isAdmin, isLoggedIn }: TopBarProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isDark = theme === 'stackbrix-dark';
@@ -56,25 +58,37 @@ export function TopBar({ theme, toggleTheme }: TopBarProps) {
         <GitHubIcon />
       </a>
 
-      <button
-        onClick={() => navigate('/admin')}
-        data-seg-active={seg('/admin')}
-        className="hbord"
-        style={{ display: 'flex', alignItems: 'center', gap: 7, border: '1.5px solid var(--line)', cursor: 'pointer', background: 'var(--surface)', color: 'var(--ink)', fontFamily: "'Plus Jakarta Sans'", fontWeight: 600, fontSize: 13.5, padding: '8px 13px', borderRadius: 10 }}
-      >
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V5z" strokeLinejoin="round" />
-          <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        Admin
-      </button>
+      {isAdmin && (
+        <button
+          onClick={() => navigate('/admin')}
+          data-seg-active={seg('/admin')}
+          className="hbord"
+          style={{ display: 'flex', alignItems: 'center', gap: 7, border: '1.5px solid var(--line)', cursor: 'pointer', background: 'var(--surface)', color: 'var(--ink)', fontFamily: "'Plus Jakarta Sans'", fontWeight: 600, fontSize: 13.5, padding: '8px 13px', borderRadius: 10 }}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 2l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V5z" strokeLinejoin="round" />
+            <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Admin
+        </button>
+      )}
 
-      <button
-        onClick={() => navigate('/login')}
-        style={{ border: 0, cursor: 'pointer', background: 'var(--ink)', color: 'var(--bg)', fontFamily: "'Baloo 2', cursive", fontWeight: 700, fontSize: 14, padding: '9px 18px', borderRadius: 10 }}
-      >
-        Sign in
-      </button>
+      {!isLoggedIn ? (
+        <button
+          onClick={() => navigate('/login')}
+          style={{ border: 0, cursor: 'pointer', background: 'var(--ink)', color: 'var(--bg)', fontFamily: "'Baloo 2', cursive", fontWeight: 700, fontSize: 14, padding: '9px 18px', borderRadius: 10 }}
+        >
+          Sign in
+        </button>
+      ) : (
+        <button
+          onClick={() => navigate('/editor')}
+          className="hbord"
+          style={{ display: 'flex', alignItems: 'center', gap: 7, border: '1.5px solid var(--line)', cursor: 'pointer', background: 'var(--surface)', color: 'var(--ink)', fontFamily: "'Plus Jakarta Sans'", fontWeight: 600, fontSize: 13.5, padding: '8px 13px', borderRadius: 10 }}
+        >
+          My docs
+        </button>
+      )}
 
       <button
         onClick={toggleTheme}
